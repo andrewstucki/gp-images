@@ -1,0 +1,16 @@
+# This is a Dockerfile with all the tooling necessary for running terraform manifests for base infrastructure
+FROM hashicorp/terraform:0.11.13
+
+ENV TERRAFORM_CIRCLECI_VERSION 0.0.1
+
+RUN apk update && \
+      apk add curl docker && \
+    rm -rf /tmp/* && \
+    rm -rf /var/cache/apk/* && \
+    rm -rf /var/tmp/* && \
+    mkdir -p ~/.terraform.d/plugins/linux_amd64 && \
+    curl -L -o ~/.terraform.d/plugins/linux_amd64/terraform-provider-circleci_v$TERRAFORM_CIRCLECI_VERSION \
+      https://github.com/andrewstucki/terraform-provider-circleci/releases/download/$TERRAFORM_CIRCLECI_VERSION/terraform-provider-circleci-linux-amd64 && \
+    chmod +x ~/.terraform.d/plugins/linux_amd64/terraform-provider-circleci_v$TERRAFORM_CIRCLECI_VERSION
+
+ENTRYPOINT ["bin/sh", "-c"]

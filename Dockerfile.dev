@@ -1,0 +1,17 @@
+# This is the base docker image for the development environment
+FROM gobuffalo/buffalo:v0.14.3 as builder
+
+ENV GOCACHE=/cache
+
+RUN go get github.com/gobuffalo/buffalo-plugins && \
+    go get -v github.com/gobuffalo/buffalo-pop && \
+    buffalo plugins list && \
+    mkdir -p /src
+
+ENV GO111MODULE=on ADDR=0.0.0.0
+
+ADD https://raw.githubusercontent.com/eficode/wait-for/f71f8199a0dd95953752fb5d3f76f79ced16d47d/wait-for /bin/wait-for
+
+RUN apt-get update && apt-get install -y -q netcat && rm -rf /var/lib/apt/lists/* && chmod +x /bin/wait-for && mkdir -p /src
+
+WORKDIR /src
